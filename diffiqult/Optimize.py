@@ -1,7 +1,17 @@
 ''' This module was taken from scipy and modified to optimize
 several parameters at a time with the BFGS Minimization.'''
-from __future__ import division, print_function, absolute_import
+from __future__ import absolute_import, division, print_function
 
+import warnings
+
+import numpy as np
+from numpy import (Inf, argmin, asarray, asfarray, atleast_1d, eye, isinf,
+                   mgrid, shape, sqrt, squeeze, vectorize, zeros)
+from scipy._lib._util import getargspec_no_self as _getargspec
+from scipy._lib.six import callable
+
+from diffiqult.Linesearch import LineSearchWarning, line_search_wolfe1
+from diffiqult.Linesearch import line_search_wolfe2 as line_search
 
 # Minimization routines
 
@@ -13,17 +23,7 @@ __all__ = ['fmin', 'fmin_powell', 'fmin_bfgs', 'fmin_ncg', 'fmin_cg',
 
 __docformat__ = "restructuredtext en"
 
-import warnings
-import numpy
-from scipy._lib.six import callable
-from numpy import (atleast_1d, eye, mgrid, argmin, zeros, shape, squeeze,
-                   vectorize, asarray, sqrt, Inf, asfarray, isinf)
-import numpy as np
 
-from diffiqult.Linesearch import (line_search_wolfe1, line_search_wolfe2,
-                         line_search_wolfe2 as line_search,
-                         LineSearchWarning)
-from scipy._lib._util import getargspec_no_self as _getargspec
 
 
 # standard status messages of optimizers

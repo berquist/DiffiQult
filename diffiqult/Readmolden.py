@@ -1,8 +1,10 @@
-import numpy as np
 import decimal
 ## This is for checking if a file exists or not
 ## Only works of python2
 import os
+
+import numpy as np
+
 
 ''' This module reads molden outputs from AutoChem and produces 
     Molecular orbitals and AO from it'''
@@ -297,4 +299,3 @@ if __name__ == '__main__':
         frames = ['./Data-contracted-ac-z-ac-z/h2o/h2o-sto-2g-task-1-BFGS_step_0.molden','./Data-primitive-a-z-a-z/h2o/h2o-sto-2g-task-1-BFGS_step_0.molden']
         sys = Molecule(frames[0])
         sys = Molecule(frames[1])
-

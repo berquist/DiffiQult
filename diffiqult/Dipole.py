@@ -1,8 +1,9 @@
+import numpy as np
+from algopy import UTPM
+
 from diffiqult.Integrals import nuclearmatrix
 from diffiqult.Param import select_weight
 
-from algopy import UTPM
-import numpy as np
 
 def nuclear_gradient(mol,center = np.array([0.0, 0.0, 0.0])):
         ''' In computes the geometric derivatives of the kinetics matrix '''

@@ -13,13 +13,13 @@ Functions
     scalar_search_wolfe2
 
 """
-from __future__ import division, print_function, absolute_import
+from __future__ import absolute_import, division, print_function
 
 from warnings import warn
 
-from scipy.optimize import minpack2
 import numpy as np
 from scipy._lib.six import xrange
+from scipy.optimize import minpack2
 
 __all__ = ['LineSearchWarning', 'line_search_wolfe1', 'line_search_wolfe2',
            'scalar_search_wolfe1', 'scalar_search_wolfe2',

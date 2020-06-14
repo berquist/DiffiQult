@@ -1,9 +1,12 @@
-from diffiqult.Integrals import erivector,overlapmatrix,nuclearmatrix,kineticmatrix,normalization
-from diffiqult.Tools import euclidean_norm,printmatrix,eri_index
 import algopy
-from algopy import UTPM, zeros,transpose
 import numpy as np
+from algopy import UTPM, transpose, zeros
+
 from diffiqult.Eigen import eigensolver
+from diffiqult.Integrals import (erivector, kineticmatrix, normalization,
+                                 nuclearmatrix, overlapmatrix)
+from diffiqult.Tools import eri_index, euclidean_norm, printmatrix
+
 
 '''
 This module contains functions to obtain energy

@@ -1,10 +1,14 @@
 import math
-from diffiqult.Tools import euclidean_norm2, incompletegammaf, vec_tomatrix, matrix_tovector
-import scipy as sc
 import sys
-import numpy as np
+
 import algopy
+import numpy as np
+import scipy as sc
 from algopy import UTPM, zeros
+
+from diffiqult.Tools import (euclidean_norm2, incompletegammaf,
+                             matrix_tovector, vec_tomatrix)
+
 
 def overlapmatrix(alpha,coef,xyz,l,nbasis,contr_list,dtype):
     S = algopy.zeros((nbasis,nbasis),dtype=dtype)

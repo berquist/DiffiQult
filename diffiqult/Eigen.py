@@ -1,5 +1,6 @@
+import algopy
 import numpy as np
-import algopy 
+
 
 ''' This routines were taken from:
 Golub G H and Van Loan C F (1996) Matrix Computations (3rd Edition) 
@@ -72,5 +73,3 @@ def eigensolver(A):
     #     print 'I have not implement it repeated eigenvalues'
     #     exit()
     return eigsys
-
-

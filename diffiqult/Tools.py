@@ -1,7 +1,8 @@
+import itertools
+
+import numpy as np
 import scipy as sc
 from scipy import special
-import numpy as np
-import itertools
 
 
 def vec_tomatrix(x,n):
