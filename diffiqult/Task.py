@@ -227,7 +227,7 @@ class Tasks(object):
        args = self._energy_args(max_scf=max_scf,max_d=max_d,log=True,printguess=None,readguess=readguess,name=name,write=output)
 
        if self.verbose:
-          t0 = time.clock()
+          t0 = time.monotonic()
           self._print_head_grad(max_scf,readguess)
 
        ene_function = rhfenergy
@@ -235,7 +235,7 @@ class Tasks(object):
        self.sys.grad = grad
 
        if self.verbose:
-          timer = time.clock() - t0
+          timer = time.monotonic() - t0
           self._print_tail_grad(timer,grad,argnum)
        return grad
 
@@ -257,7 +257,7 @@ class Tasks(object):
 
           if self.verbose:
              self._print_head_energy(max_scf,rguess)
-             t0 = time.clock()
+             t0 = time.monotonic()
 
           args = self._energy_args(max_scf=max_scf,max_d=max_d,log=True,printguess=pguess,readguess=rguess,name=name,write=output)
 
@@ -273,7 +273,7 @@ class Tasks(object):
 
           self.energy = ene
           if self.verbose:
-             timer = time.clock() - t0
+             timer = time.monotonic() - t0
              self._print_tail_energy(timer,ene,pguess,output=output,name=name)
           return ene
 
@@ -316,7 +316,7 @@ class Tasks(object):
           print(readguess)
           print(max_scf)
           if self.verbose:
-             t0 = time.clock()
+             t0 = time.monotonic()
              self._print_head_optimization(taskname,max_scf,readguess,**otherargs)
 
           name=taskname
@@ -344,7 +344,7 @@ class Tasks(object):
           res = opt(ene_function,grad_fun,args,argnum,log,name,**otherargs)
 
           if self.verbose:
-             timer = time.clock()-t0
+             timer = time.monotonic()-t0
              self._print_tail_optimization(res,timer)
 
           self.status = bool(res.status == 0 or res.status==1)
