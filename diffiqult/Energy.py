@@ -203,8 +203,7 @@ def rhfenergy(alpha_old,coef2,xyz,l,charges,xyz_atom,natoms,nbasis,contr_list,ne
 
 
     def write_molden():
-       import Param
-       from Param import select_atom
+       from diffiqult.Param import select_atom
        ## Details of calculation
        tape.write('[Energy] \n')
        tape.write('E_elec: '+str(E_elec)+'\n')
