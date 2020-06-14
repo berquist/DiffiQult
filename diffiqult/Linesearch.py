@@ -179,8 +179,8 @@ def scalar_search_wolfe1(phi, derphi, phi0=None, old_phi0=None, derphi0=None,
             break
 
         if phi1 == 99999:
-	    stp = None
-	    task = 'SCF did not converged'
+            stp = None
+            task = 'SCF did not converged'
             break
     else:
         # maxiter reached, the line search did not converge
@@ -375,7 +375,7 @@ def scalar_search_wolfe2(phi, derphi=None, phi0=None,
 
     phi_a1 = phi(alpha1)
     if phi_a1 == 99999:
-	return 
+        return
     #derphi_a1 = derphi(alpha1)  evaluated below
 
     phi_a0 = phi0
@@ -417,8 +417,8 @@ def scalar_search_wolfe2(phi, derphi=None, phi0=None,
         derphi_a0 = derphi_a1
 
         if phi_a1 == 99999:
-	    stp = None
-	    task = 'SCF did not converged'
+            stp = None
+            task = 'SCF did not converged'
             break
 
 

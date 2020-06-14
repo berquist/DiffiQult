@@ -1,5 +1,5 @@
 import numpy as np
-from Param import select_atom
+from diffiqult.Param import select_atom
 
 
 class Getbasis():

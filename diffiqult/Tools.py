@@ -12,15 +12,15 @@ def vec_tomatrix(x,n):
           break
     j = n+reverse_x
     return i,j
-    
-            
+
+
 def matrix_tovector(i,j,n):
-    '''This function returns the index of the vector 
+    '''This function returns the index of the vector
     for a given i,j element of a matrix
     Note: j < i, [i,j] = [j,i] '''
-    
+
     return int(i*n-i*(i+1)/2+j)
-       
+
 
 def eri_index(i,j,k,l,n):
     '''This function returns the index of a vector, that maps to
@@ -77,7 +77,7 @@ def grad_incompletegammaf(ans,t,m):
 
 def incompletegammaf(t,n):
     '''This function returns the inclomplete gamma function
-    based on Numerical Recipies Book and pag 7 of Methods in 
+    based on Numerical Recipies Book and pag 7 of Methods in
     Computational Physics'''
     t = max(t,1e-12)
     return getgammp(n+0.5,t)*pow(t,-n-0.5)*0.5#*pow(2/np.pi,0.5)
@@ -87,7 +87,7 @@ def incompletegammaf(t,n):
 def getgammp(a,x):
     ''' Returns gamma incomplete function times gamma(a), Numerical Recipies p. 218 '''
     if x < 0:
-       print 'Eri or Nuclear integrals, gammainc: Not valid value of t '
+       print('Eri or Nuclear integrals, gammainc: Not valid value of t ')
        exit()
     if (x < a + 1.0):
        #print 'gser'
@@ -121,7 +121,7 @@ def gser(a,x):
         gln = gammaln(a)
         #return (summ*np.exp(-x+a*np.log(x)-gln))*np.exp(gln)
         return np.multiply(summ,np.multiply(np.exp(np.add(np.add(-x,np.multiply(a,np.log(x))),-gln)),np.exp(gln)))
-   print 'Eri or Nuclear integrals, gammainc: Series representation does not converge',a
+   print('Eri or Nuclear integrals, gammainc: Series representation does not converge',a)
    exit()
 
 def gcf(a,x):
@@ -137,17 +137,17 @@ def gcf(a,x):
        b = 2.0 + b
        d = an*d+b
        if (abs(d) < fpmin):
-          d = fpmin    
+          d = fpmin
        c = b +an/c
        if (abs(c) <fpmin):
-          c = fpmin    
+          c = fpmin
        d = 1.0/d
        de = d*c
        h = h*de
        if (abs(de-1.0) < eps):
           gln = gammaln(a)
           return (1.0-np.exp(-x+a*np.log(x)-gln)*h)*np.exp(gln)
-   print 'Eri or Nuclear integrals, gammainc: Inc. frac. representation does not converge'
+   print('Eri or Nuclear integrals, gammainc: Inc. frac. representation does not converge')
    exit()
 
 
@@ -172,7 +172,7 @@ def gammainc(t,n):
          new*= getfsh(ts,i+1)/i
          summation = summation + new
      return summation
-      
+
 def printmatrix(matrix,tape):
     np.set_printoptions(precision=7)
     line = '  '
@@ -185,7 +185,7 @@ def printmatrix(matrix,tape):
            line += str(elem)+' '
        tape.write(line+'\n')
     return
-     
+
 
 def grad_eigen(ans,x):
     """Gradient for eigenvalues and vectors of a symmetric matrix with repeated eigenvalues."""
@@ -193,21 +193,21 @@ def grad_eigen(ans,x):
     w, v = ans              # Eigenvalues, eigenvectors.
     dot = np.dot if x.ndim == 2 else partial(np.einsum, '...ij,...jk->...ik')
     T = lambda x: np.swapaxes(x, -1, -2)
-    print 'x',x
-    print 'lam',w
-    print 'vec',v
+    print('x',x)
+    print('lam',w)
+    print('vec',v)
     def eigh_grad(g):
         tool = 1.0e-5
         wg, vg = g          # Gradient w.r.t. eigenvalues, eigenvectors.
         w_repeated = np.repeat(w[..., np.newaxis], N, axis=-1)
-        F = T(w_repeated) - w_repeated 
+        F = T(w_repeated) - w_repeated
         for i in xrange(F.shape[0]):
            for j in xrange(F.shape[1]):
               if F[i,j] < tool:
                  F[i,j] = 0.0
               else:
                  F[i,j] = 1.0/F[i,j]
-        print F
+        print(F)
         return dot(v * wg[..., np.newaxis, :] + dot(v, F * dot(T(v), vg)), T(v))
     return eigh_grad
 

@@ -1,8 +1,8 @@
-from Energy import rhfenergy, penalty_inverse
+from diffiqult.Energy import rhfenergy, penalty_inverse
 from scipy.optimize import optimize as opt
-from Dipole import dipolemoment
-from Minimize import minimize
-from Molecule import Getbasis,Getgeom,System_mol
+from diffiqult.Dipole import dipolemoment
+from diffiqult.Minimize import minimize
+from diffiqult.Molecule import Getbasis,Getgeom,System_mol
 
 import sys
 import numpy as np
@@ -69,13 +69,13 @@ def function_hessian_algopy(function,argnum):
       grad_fun.append(function_builder(i))
     return grad_fun
 
-    
+
 class Tasks(object):
      '''This class manage the implemented tasks over a system included
         in DiffiQult.
 
         Attributes:
-        
+
          sys  : System_mol object
                Contains the basis functions, geometry and information of the a molecular system.
          name : string
@@ -115,11 +115,11 @@ class Tasks(object):
           '''
           self.name = name
           self.sys = mol
-	  self.verbose = verbose
+          self.verbose = verbose
           self.status = True
-	  if verbose:
-	  	self.tape = open(name+'.out',"w")
-		self._printheader()
+          if verbose:
+                self.tape = open(name+'.out',"w")
+                self._printheader()
           self._select_task ={
               "Energy": self.energy,
               "Opt": self.optimization,
@@ -144,20 +144,20 @@ class Tasks(object):
           return args
 
      def _printheader(self):
-	 """This function prints the header of the outputfile"""
+         """This function prints the header of the outputfile"""
          self.tape.write(' *************************************************\n')
          self.tape.write(' DiffiQult \n')
          self.tape.write(' Author: Teresa Tamayo Mendoza \n')
          self.tape.write(' *************************************************\n\n')
          localtime = time.asctime( time.localtime(time.time()) )
-	 self.tape.write(" Starting at %s\n"%localtime)
-        
+         self.tape.write(" Starting at %s\n"%localtime)
+
 
      def _printtail(self):
          localtime = time.asctime( time.localtime(time.time()) )
-	 self.tape.write(" Finishing at %s \n"%localtime)
+         self.tape.write(" Finishing at %s \n"%localtime)
          self.tape.write(' *************************************************\n\n')
-	 return
+         return
 
      def _printenergy(self,max_scf,rguess,tol=1e-8):
          self.tape.write(' SCF Initial parameters \n')
@@ -166,7 +166,7 @@ class Tasks(object):
          self.tape.write(' Initial density matrix: %s\n'%str(rguess))
          self.sys.printcurrentgeombasis(self.tape)
          return
-     
+
      def _print_head_grad(self,max_scf,rguess):
          self.tape.write(' \n Grad single point ...\n')
          self.tape.write(' ---Start--- \n')
@@ -248,20 +248,20 @@ class Tasks(object):
           log = True # We are not using logarithms of alphas
           eigen = True # We are using diagonalizations
 
-       	  rguess = None
+          rguess = None
           if printcoef:
              pguess = name+'.npy'
           else:
              pguess = None
 
 
-	  if self.verbose:
+          if self.verbose:
              self._print_head_energy(max_scf,rguess)
              t0 = time.clock()
 
           args = self._energy_args(max_scf=max_scf,max_d=max_d,log=True,printguess=pguess,readguess=rguess,name=name,write=output)
 
-          # Function         
+          # Function
           ene = rhfenergy(*(args))
           if (ene == 99999):
              self.status = False
@@ -275,7 +275,7 @@ class Tasks(object):
           if self.verbose:
              timer = time.clock() - t0
              self._print_tail_energy(timer,ene,pguess,output=output,name=name)
-          return ene 
+          return ene
 
 
      def _BFGS(self,ene_function,grad_fun,args,argnums,log,name,**kwargs):
@@ -293,7 +293,7 @@ class Tasks(object):
                          args=tuple(args),
                          argnum=argnums,
                          method='BFGS',jac=grad_fun,gtol=tol,name=name,options={'disp': True},**kwargs)
-          return terms 
+          return terms
 
      def _optupdateparam(self,argnum,x):
           ### HARD CODED (ONLY WORKS WITH ALPHA AND XYZ)
@@ -303,31 +303,31 @@ class Tasks(object):
                  self.sys.alpha = np.exp(x[cont:cont+len(self.sys.alpha)])
                  cont += len(self.sys.alpha)
              elif i == 2:
-                 self.sys.xyz = x[cont:cont+self.sys.nbasis*3].reshape(self.sys.nbasis,3) 
+                 self.sys.xyz = x[cont:cont+self.sys.nbasis*3].reshape(self.sys.nbasis,3)
                  cont += self.sys.nbasis*3
              elif i == 1:
-                 self.sys.coef = x[cont:cont+len(self.sys.alpha)] 
+                 self.sys.coef = x[cont:cont+len(self.sys.alpha)]
                  cont += self.sys.alpha
              else:
                  raise NotImplementedError("Optimization is just restricted to contraction coefficients, exponents and Gaussian centers ")
           return
-          
+
      def _optimization(self,max_scf=100,log=True,scf=True,readguess=None,argnum=[0],taskname='Output', method='BFGS',penalize=None,**otherargs):
-          print readguess
-          print max_scf
-	  if self.verbose:
+          print(readguess)
+          print(max_scf)
+          if self.verbose:
              t0 = time.clock()
              self._print_head_optimization(taskname,max_scf,readguess,**otherargs)
 
           name=taskname
           rguess = None
-       
+
           ### If initial guess
           if readguess:
              pguess = name +'.npy'
              out = False
              ene = self._singlepoint(max_scf,max_d,printcoef=pguess,name=name,output=False)
-	     if ene == 99999:
+             if ene == 99999:
                 raise NameError('SCF did not converved')
              rguess= pguess
 
@@ -343,7 +343,7 @@ class Tasks(object):
 
           res = opt(ene_function,grad_fun,args,argnum,log,name,**otherargs)
 
-	  if self.verbose:
+          if self.verbose:
              timer = time.clock()-t0
              self._print_tail_optimization(res,timer)
 
@@ -357,7 +357,7 @@ class Tasks(object):
              coef_file = name
              ene = self._singlepoint(max_scf,max_scf,coef_file,name,False)
          dipolemoment(self.sys,coef_file+'.npy')
-	 return
+         return
 
      def optimization(self,max_scf=100,log=True,scf=True,name='Output',readguess=None,output=False,argnum=[0],**kwargs):
         '''
@@ -382,10 +382,10 @@ class Tasks(object):
         name    : str
                  Output file name default Output
         readguess : str
-                 File path to a npy file in case on predefined initial guess of the density matrix  
+                 File path to a npy file in case on predefined initial guess of the density matrix
         output : bool
                  True if it will print a molden file in case of success
-                 
+
         '''
         name = self.name+'-task-'+str(self.ntask)
         res,timer = self._optimization(max_scf,log,scf,readguess,argnum,taskname=name,**kwargs)
@@ -400,7 +400,7 @@ class Tasks(object):
         max_scf : integer
 
                  Maximum number of scf steps, default 30.
-        printguess : str 
+        printguess : str
 
                  File path if it is requiered to prepare an inital guess for the molecular orbital coefficients.
 
@@ -420,7 +420,7 @@ class Tasks(object):
 
         max_scf : integer
                  Maximum number of scf steps, default 30.
-        printguess : str 
+        printguess : str
 
                  File path if it is requiered to prepare an inital guess for the molecular orbital coefficients.
 
@@ -433,7 +433,7 @@ class Tasks(object):
         return
 
      def runtask(self,task,**kwargs):
-        ''' 
+        '''
         This method run a given task and if it has success, it uptates system with the most recent energy value and basis function
 
         Parameters:
@@ -444,7 +444,7 @@ class Tasks(object):
               'Energy' is a single point calculation.
 
               'Opt' an optimization of a given parameter.
-        
+
               'Grad' the energy gradient with respect to a parameter
 
         Options:
@@ -460,37 +460,37 @@ class Tasks(object):
         if self.verbose:
            self.tape.write(' -------------------------------------------------------- \n')
            self.tape.write(' Task: %s \n'%task)
-    	function = self._select_task.get(task,lambda: self.tape.write(' This task is not implemented\n'))
+        function = self._select_task.get(task,lambda: self.tape.write(' This task is not implemented\n'))
         if self.verbose:
             self.tape.write('\n')
-	function(**kwargs)
+        function(**kwargs)
         return self.status
 
      def end(self):
         if self.verbose:
              self._printtail()
              self.tape.close()
-	return
-	 
+        return
+
 
 def main():
      from Basis import basis_set_3G_STO as basis
      d = -1.64601435
      mol = [(1,(0.0,0.0,0.20165898)),(1,(0.0,0.0,d))]
      ne = 2
-    
+
      system = System_mol(mol,                                ## Geometry
                          basis,                              ## Basis set (if shifted it should have the coordinates too)
                          ne,                                 ## Number of electrons
-                         shifted=False,                      ## If the basis is going to be on the atoms coordinates 
+                         shifted=False,                      ## If the basis is going to be on the atoms coordinates
                          angs=False,                         ## Units -> Bohr
                          mol_name='agua')                    ## Units -> Bohr
- 
+
      manager = Tasks(system,
                      name='../tests/testfiles/h2_sto_3g',      ## Prefix for all optput files
                      verbose=True)          ## If there is going to be an output
 
-    
+
      manager.runtask('Energy',
                      max_scf=50,
                      printcoef=True,
@@ -530,4 +530,3 @@ def main():
 
 if __name__ == "__main__":
      main()
-

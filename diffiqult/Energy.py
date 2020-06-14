@@ -1,12 +1,9 @@
-import Integrals
-from Integrals import erivector,overlapmatrix,nuclearmatrix,kineticmatrix,normalization
-import Tools
-from Tools import euclidean_norm,printmatrix,eri_index
+from diffiqult.Integrals import erivector,overlapmatrix,nuclearmatrix,kineticmatrix,normalization
+from diffiqult.Tools import euclidean_norm,printmatrix,eri_index
 import algopy
 from algopy import UTPM, zeros,transpose
 import numpy as np
-import Eigen 
-from Eigen import eigensolver
+from diffiqult.Eigen import eigensolver
 
 '''
 This module contains functions to obtain energy
@@ -15,8 +12,8 @@ This module contains functions to obtain energy
 
 def mo_naturalorbital(D):
     eigsys = eigensolver(D)
-    return [eigsys[0]] 
-    
+    return [eigsys[0]]
+
 
 def nuclearrepulsion(atoms,charges,natoms):
     tmp = 0.0
@@ -42,18 +39,18 @@ def cannonicalputication(D,S):
     D2 = np.dot(np.dot(D,S),D)
     D3 = np.dot(np.dot(D2,S),D)
     c = np.trace(np.subtract(D2,D3))/np.trace(np.subtract(D,D2)) ## Eq 17 Manolopoulos
-    
+
     if c <= 0.5:
         tmp =  np.subtract(np.add(np.multiply((1.0-2.0*c),D),np.multiply((1.0+c),D2)),D3)/(1.0-c)
     else:
         tmp =  np.subtract(np.multiply((1.0+c),D2),D3)/(c)
-    
+
     return np.divide(tmp,np.trace(np.dot(D,S))) ## I am not dividing by one here!!
-    
+
 def newdensity(F,Sinv,nbasis,ne):
     F_offdiag = []
     for i in range(nbasis):
-        F_offdiag.append(0.0) 
+        F_offdiag.append(0.0)
     for i in range(nbasis):
        for j in range(nbasis):
            if i != j:
@@ -63,7 +60,7 @@ def newdensity(F,Sinv,nbasis,ne):
     for i in range(nbasis):
         listFmin.append(F[i][i] - F_offdiag[i])
         listFmax.append(F[i][i] + F_offdiag[i])
-    
+
     Fmax = max(listFmax)
     Fmin = min(listFmin)
 
@@ -116,11 +113,11 @@ def rhfenergy(alpha_old,coef2,xyz,l,charges,xyz_atom,natoms,nbasis,contr_list,ne
     '''
     tool_D = 1e-8
     tool = 1e-8
-    
+
     if log:
        alpha = algopy.exp(alpha_old)
     else:
-    	alpha = alpha_old
+        alpha = alpha_old
 
     if type(xyz_atom) != np.ndarray: ## Cover the case of diff xyz atom
         coef = normalization(alpha,coef2,l,contr_list,dtype= np.float64(1.0))
@@ -144,9 +141,9 @@ def rhfenergy(alpha_old,coef2,xyz,l,charges,xyz_atom,natoms,nbasis,contr_list,ne
        SqrtST = algopy.transpose(SqrtS)
     else:
        Sinv = np.linalg.inv(S)
- 
+
     if readguess != None:
-	C = np.load(readguess)
+        C = np.load(readguess)
         D = np.zeros((nbasis,nbasis))
         for i in range(nbasis):
            for j in range(nbasis):
@@ -156,7 +153,7 @@ def rhfenergy(alpha_old,coef2,xyz,l,charges,xyz_atom,natoms,nbasis,contr_list,ne
               D[i,j] = tmp
         F = fockmatrix(Hcore,Eri,D,nbasis,alpha,dtype)
     else:
-    	F = Hcore
+        F = Hcore
     OldE = 1e8
 
     status = False
@@ -190,7 +187,7 @@ def rhfenergy(alpha_old,coef2,xyz,l,charges,xyz_atom,natoms,nbasis,contr_list,ne
         E_step.append(E_elec)
         E_nuc = nuclearrepulsion(xyz_atom,charges,natoms)
         if np.absolute(E_elec - OldE) < tool:
-           status = True 
+           status = True
            break
         OldE = E_elec
     E_nuc = nuclearrepulsion(xyz_atom,charges,natoms)
@@ -202,8 +199,8 @@ def rhfenergy(alpha_old,coef2,xyz,l,charges,xyz_atom,natoms,nbasis,contr_list,ne
        mol.erepulsion = Eri
        mol.hcore = Hcore
        mol.mo_coeff = C
-       return 
-            
+       return
+
 
     def write_molden():
        import Param
@@ -215,7 +212,7 @@ def rhfenergy(alpha_old,coef2,xyz,l,charges,xyz_atom,natoms,nbasis,contr_list,ne
        tape.write('E_tot: '+str(E_nuc+E_elec)+'\n')
        tape.write('SCF Details\n')
        line = 'Eigen: '
-       if eigen: 
+       if eigen:
            tape.write(line+'True')
        else:
            tape.write(line+'False')
@@ -263,7 +260,7 @@ def rhfenergy(alpha_old,coef2,xyz,l,charges,xyz_atom,natoms,nbasis,contr_list,ne
                cont +=1
            line +=']\n'
        tape.write(line)
-           
+
        ### Atom coordinates
        tape.write('[Atoms]\n')
        for i,coord in enumerate(xyz_atom):
@@ -320,7 +317,7 @@ def rhfenergy(alpha_old,coef2,xyz,l,charges,xyz_atom,natoms,nbasis,contr_list,ne
        print('E_tot: '+str(E_nuc+E_elec)+'\n')
        print('SCF DID NOT CONVERGED')
        return 99999
-     
+
     return E_elec+E_nuc
 
 def penalty_inverse(alpha,coef3,x,y,z,l,charges,x_atom,y_atom,z_atom,natoms,nbasis,ne,max_scf,max_d,lbda,eigen,name,write):
@@ -337,4 +334,3 @@ def penalty_inverse(alpha,coef3,x,y,z,l,charges,x_atom,y_atom,z_atom,natoms,nbas
     S = overlapmatrix2(alpha,coef,l,nbasis)
     penalty = lbda*1.0e-3/np.sqrt(np.linalg.det(S))
     return energy + penalty
-

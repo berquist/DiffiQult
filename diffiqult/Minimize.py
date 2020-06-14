@@ -3,8 +3,7 @@ This module was originally a scipy module
 Functions
 ---------
 """
-import Optimize
-from Optimize import minimize_bfgs
+from diffiqult.Optimize import minimize_bfgs
 
 ## TODO add tool value
 def minimize(fun, x0, args=(),  method='BFGS', jac=None,tol=None,gtol=None,

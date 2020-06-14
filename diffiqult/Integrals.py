@@ -1,6 +1,5 @@
 import math
-import Tools
-from Tools import *
+from diffiqult.Tools import euclidean_norm2, incompletegammaf, vec_tomatrix, matrix_tovector
 import scipy as sc
 import sys
 import numpy as np
@@ -35,12 +34,12 @@ def overlap_primitive(alpha,coefa,A,la,beta,coefb,B,lb):
     for x,l1 in enumerate(la):
        l2 = lb[x]
        tmp = 1.0
-       if l1 >0: 
-           tmp = tmp*(B[x]-A[x])*beta*gamma 
-       if l2 >0: 
+       if l1 >0:
+           tmp = tmp*(B[x]-A[x])*beta*gamma
+       if l2 >0:
            tmp = tmp*(A[x]-B[x])*alpha*gamma
        if l1 + l2 == 2:
-           tmp = tmp + 0.5*gamma#*gamma 
+           tmp = tmp + 0.5*gamma#*gamma
        inti = tmp*inti
     ab = -1.0*euclidean_norm2(np.subtract(A,B))
     exp = np.exp((alpha*beta*ab)*gamma)
@@ -69,7 +68,6 @@ def nuclear_contracted(alphas,coefa,xyza,la,betas,coefb,xyzb,lb,atoms,charge,num
                                     betas[j],coefb[j],xyzb,lb,
                                     atoms,charge,numatoms)
     return v
-    
 
 
 def nuclear_primitive(alpha,coefa,A,la,beta,coefb,B,lb,C,charge,numatoms):
@@ -107,12 +105,12 @@ def nuclear_primitive(alpha,coefa,A,la,beta,coefb,B,lb,C,charge,numatoms):
           L0j = L0j*incompletegammaf(pc,1.0)
           Li0 = Li0*incompletegammaf(pc,1.0)
           if i == j:
-             Lij = Lij - 0.5*gammainv*incompletegammaf(pc,1.0) 
+             Lij = Lij - 0.5*gammainv*incompletegammaf(pc,1.0)
           nuclear= nuclear - charge[k]*(Sij*L00+Si0*L0j+S0j*Li0+Lij)
        return nuclear*S00*2.0*np.power(gamma/np.pi,0.5)
     if n == 1:
        i = la.index(n)
-       Si0 = (B[i]-A[i])*beta*gammainv 
+       Si0 = (B[i]-A[i])*beta*gammainv
        nuclear = 0.0
        for k in range(0,numatoms):
           pc = gamma*euclidean_norm2(np.subtract(P,C[k]))
@@ -167,10 +165,10 @@ def kinetic_primitive(alpha,coefa,A,la,beta,coefb,B,lb):
        j = lb.index(m)
        Ki0 = 2.0*eta*gamma*beta*(B[i]-A[i])
        K0j = 2.0*eta*gamma*alpha*(A[j]-B[j])
-       Si0 = (B[i]-A[i])*beta*gamma 
+       Si0 = (B[i]-A[i])*beta*gamma
        S0j = (A[j]-B[j])*alpha*gamma
        Sij = S0j*Si0
-       tot = S0j*Ki0 + Si0*K0j 
+       tot = S0j*Ki0 + Si0*K0j
        if i == j:
           Kij = eta*gamma
           Sij = Sij + 0.5*gamma
@@ -179,7 +177,7 @@ def kinetic_primitive(alpha,coefa,A,la,beta,coefb,B,lb):
     if n == 1:
        i = la.index(n)
        Ki0 = 2.0*eta*gamma*beta*(B[i]-A[i])
-       Si0 = (B[i]-A[i])*beta*gamma 
+       Si0 = (B[i]-A[i])*beta*gamma
        return (Si0*K00 + Ki0)*S00
     if m == 1:
        j = lb.index(m)
@@ -188,13 +186,13 @@ def kinetic_primitive(alpha,coefa,A,la,beta,coefb,B,lb):
        return (S0j*K00 + K0j)*S00
 
 def erivector(alpha,coef,xyz,l,nbasis,contr_list,dtype):
-    '''This function returns the eris in form a vector, 
-    to get an element of the eris tensor, use eri_index, 
+    '''This function returns the eris in form a vector,
+    to get an element of the eris tensor, use eri_index,
     included in Tools'''
     ### NOTE: YOU CAN REPLACE A VALUE OF THE ARRAY!!!
-    vec_size = nbasis*(nbasis**3 + 2*nbasis**2 + 3*nbasis + 2)/8 ## Vector size
+    vec_size = int(nbasis*(nbasis**3 + 2*nbasis**2 + 3*nbasis + 2)/8) ## Vector size
     Eri_vec = algopy.zeros((vec_size,),dtype=dtype)
-    len_vec = nbasis*(nbasis + 1)/2 
+    len_vec = int(nbasis*(nbasis + 1)/2)
     for x in range(len_vec):
         i,j = vec_tomatrix(x,nbasis)
         contr_i_i = sum(contr_list[0:i])
@@ -257,13 +255,13 @@ def eris_primitive(a,coefa,A,la,b,coefb,B,lb,c,coefc,C,lc,d,coefd,D,ld):
     nb = max(lb)
     nc = max(lc)
     nd = max(ld)
- 
+
     def F_m(terms):
        F = []
        for i in range(terms+1):
           F.append(incompletegammaf(t,i))
        return F
-    
+
     Fs = F_m(na+nb+nc+nd)
     #print Fs
 
@@ -296,7 +294,7 @@ def eris_primitive(a,coefa,A,la,b,coefb,B,lb,c,coefc,C,lc,d,coefd,D,ld):
           res.append(tmp)
        #print 'I entered ppss',res
        return res
-        
+
     def psps(i,k,P,Q,A_xyz,C_xyz,nginv,m):
        #print 'I am calculating psps'
        psss_aux = psss(i,P,A_xyz,m+1)
@@ -310,8 +308,8 @@ def eris_primitive(a,coefa,A,la,b,coefb,B,lb,c,coefc,C,lc,d,coefd,D,ld):
           res.append(tmp)
        #print 'I entered psps',res
        return res
-    
-    def ppps(i,j,k,P,Q,A_xyz,B_xyz,C_xyz,ginv,m): 
+
+    def ppps(i,j,k,P,Q,A_xyz,B_xyz,C_xyz,ginv,m):
        ppss_aux = ppss(i,j,P,A_xyz,B_xyz,ginv,m+1)
        QC =Q[k]-C_xyz[k]
        WQ = wpq[k]-Q[k]
@@ -337,31 +335,31 @@ def eris_primitive(a,coefa,A,la,b,coefb,B,lb,c,coefc,C,lc,d,coefd,D,ld):
        j = lb.index(nb)
        k = lc.index(nc)
        l = ld.index(nd)
-       #ppps_aux = ppps(i,j,k,np.copy(pab),np.copy(qcd),np.copy(A),np.copy(B),np.copy(C),gammainv,1) 
-       ppps_aux = ppps(i,j,k,pab,qcd,A,B,C,gammainv,1) 
+       #ppps_aux = ppps(i,j,k,np.copy(pab),np.copy(qcd),np.copy(A),np.copy(B),np.copy(C),gammainv,1)
+       ppps_aux = ppps(i,j,k,pab,qcd,A,B,C,gammainv,1)
        QD =qcd[l]-D[l]
-       WQ =wpq[l]-qcd[l] 
+       WQ =wpq[l]-qcd[l]
        #print 'angular',i,j,k,l
        tmp = QD*ppps_aux[0]+WQ*ppps_aux[1]
        #print 'tmp in pppp',tmp
        if (i==l):
           #print '1 i==l'
-          spps_aux = psps(j,k,pab,qcd,B,C,nugammainv,1) 
+          spps_aux = psps(j,k,pab,qcd,B,C,nugammainv,1)
           tmp = tmp + 0.5*nugammainv*spps_aux[1]
        if (j==l):
           #print '2 j==i'
           #print A,C,i,k
           #print nugammainv,tmp
                  #def psps(i,k,P,Q,A_xyz,C_xyz,nginv,m):
-          psps_aux = psps(i,k,pab,qcd,A,C,nugammainv,1) 
+          psps_aux = psps(i,k,pab,qcd,A,C,nugammainv,1)
           tmp = tmp + 0.5*nugammainv*psps_aux[1]
        if (k==l):
           #print '3 k==l'
-          ppss_aux = ppss(i,j,pab,A,B,gammainv,1) 
+          ppss_aux = ppss(i,j,pab,A,B,gammainv,1)
           tmp = tmp + 0.5*nuinv*(ppss_aux[0]-nuinv*rho*ppss_aux[1])
        #print 'I entered pppp',tmp
-       return tmp 
-        
+       return tmp
+
     if (len(Fs) == 2):
       if nd == 1:
          return prefactor*psss(ld.index(nd),qcd,D,0)[0]
@@ -384,22 +382,22 @@ def eris_primitive(a,coefa,A,la,b,coefb,B,lb,c,coefc,C,lc,d,coefd,D,ld):
         if (na+nc == 2):
             return prefactor*psps(la.index(na),lc.index(nc),pab,qcd,A,C,nugammainv,0)[0]
         return prefactor*psps(la.index(na),ld.index(nd),pab,qcd,A,D,nugammainv,0)[0]
-    
+
     if (len(Fs) == 5):
        return pppp(0)*prefactor
-    
+
     if (nd+nc == 2):
        if (nb == 1):
-          return prefactor*ppps(lc.index(nc),ld.index(nd),lb.index(nb),qcd,pab,C,D,B,nuinv,0)[0] 
-       return prefactor*ppps(lc.index(nc),ld.index(nd),la.index(na),qcd,pab,C,D,A,nuinv,0)[0] 
+          return prefactor*ppps(lc.index(nc),ld.index(nd),lb.index(nb),qcd,pab,C,D,B,nuinv,0)[0]
+       return prefactor*ppps(lc.index(nc),ld.index(nd),la.index(na),qcd,pab,C,D,A,nuinv,0)[0]
     elif (na+nb == 2):
        if (nc == 1):
-           return prefactor*ppps(la.index(na),lb.index(nb),lc.index(nc),pab,qcd,A,B,C,gammainv,0)[0] 
+           return prefactor*ppps(la.index(na),lb.index(nb),lc.index(nc),pab,qcd,A,B,C,gammainv,0)[0]
        else:
-           return prefactor*ppps(la.index(na),lb.index(nb),ld.index(nd),pab,qcd,A,B,D,gammainv,0)[0] 
-      
+           return prefactor*ppps(la.index(na),lb.index(nb),ld.index(nd),pab,qcd,A,B,D,gammainv,0)[0]
+
     return 1.0
-    
+
 
 
 def erissmatrix3(alpha,xyz,nbasis,S):
@@ -455,7 +453,7 @@ def gelem(a,A,b,B,c,C,d,D):
        tmp =  np.float64(0.5)*np.sqrt(np.pi/t)*sc.special.erf(np.sqrt(t))
     else:
        tmp = 1.0
-    
+
     return tmp
 
 
@@ -470,14 +468,14 @@ def normalization_primitive(alpha,l,l_large):
           div = div*2.0*k
           div = np.sqrt(div)
     factor = np.power((2.0/np.pi),0.75)*div*pow(2.0,power)
-    power = power + 0.75 
+    power = power + 0.75
     return factor*np.power(alpha,power)
 
 
 def normalization(alpha,c,l,list_contr,dtype=np.float64(1.0)):
     contr = 0
     coef = algopy.zeros(len(alpha),dtype=dtype)
-    
+
     for ib, ci in enumerate(list_contr):
        div = 1.0
        l_large = 0
@@ -494,10 +492,8 @@ def normalization(alpha,c,l,list_contr,dtype=np.float64(1.0)):
        for i in range(ci):
           for j in range(ci):
                tmp = tmp+ coef[contr+j]*coef[contr+i]/np.power(alpha[contr+i]+alpha[contr+j],l_large+1.5)
-       tmp = algopy.sqrt(tmp*div) 
+       tmp = algopy.sqrt(tmp*div)
        for i in range(contr,contr+ci):
             coef[i] = coef[i]/tmp
        contr = contr + ci
     return coef
-
-
